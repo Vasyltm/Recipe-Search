@@ -41,7 +41,7 @@
                         <action selector="startSearch:" destination="-1" eventType="touchUpInside" id="O5H-z0-eK4"/>
                     </connections>
                 </button>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="What do like to cook today?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="H9j-7A-duj">
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="What do you like to cook today?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="H9j-7A-duj">
                     <rect key="frame" x="0.0" y="279" width="414" height="30"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="IJc-1t-bLt"/>
