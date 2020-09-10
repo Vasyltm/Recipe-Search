@@ -28,9 +28,11 @@ class RecipeDetailsViewModel {
         }
     }
     
-    init(reciep: Recipe) {
-        self.recipe = reciep
+    init(recipe: Recipe) {
+        self.recipe = recipe
     }
+    
+   
     
     
 }

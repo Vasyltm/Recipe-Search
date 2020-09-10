@@ -14,7 +14,7 @@ struct ModuleBuilder {
     
     static func buildRecipeDetails(recipe: Recipe) -> UIViewController {
         let controller = RecipeDetails()
-        let viewModel = RecipeDetailsViewModel(reciep: recipe)
+        let viewModel = RecipeDetailsViewModel(recipe: recipe)
         controller.viewModel = viewModel
         return controller
     }

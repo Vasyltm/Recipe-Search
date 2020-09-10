@@ -41,12 +41,12 @@ class RecipeSearchViewModel {
                         self.recipe = []
                     }
                     self.search.numberOfRecipes = data["count"] as? Int ?? 0
-                    let recipes = data["recipes"] as? [[String: Any]] ?? []
-                    for recipe in recipes {
-                        let id = recipe["recipe_id"] as? String ?? ""
-                        let imageStringURL = recipe["image_url"] as? String ?? ""
-                        let sourceURL = recipe["source_url"] as? String ?? ""
-                        let title = recipe["title"] as? String ?? ""
+                    let recipeData = data["recipes"] as? [[String: Any]] ?? []
+                    for value in recipeData {
+                        let id = value["recipe_id"] as? String ?? ""
+                        let imageStringURL = value["image_url"] as? String ?? ""
+                        let sourceURL = value["source_url"] as? String ?? ""
+                        let title = value["title"] as? String ?? ""
                         var recipe = Recipe(id: id, image_url: imageStringURL, source_url: sourceURL, title: title)
                         guard let imagrURL = URL(string: imageStringURL)  else {self.isLoadEnabled = true;  return }
                         self.workItem = DispatchWorkItem  { [weak self] in
