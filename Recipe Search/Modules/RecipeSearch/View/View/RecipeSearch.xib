@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="RecipeSearch" customModule="Recipe_Search" customModuleProvider="target">
+            <connections>
+                <outlet property="errorBlock" destination="9AV-Zl-Dhr" id="K8l-yC-ZO2"/>
+                <outlet property="searchBar" destination="A4X-uH-T60" id="3bA-PM-cma"/>
+                <outlet property="tableViewRecipe" destination="ket-aW-dh4" id="jiA-qk-udz"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <searchBar contentMode="redraw" showsCancelButton="YES" translatesAutoresizingMaskIntoConstraints="NO" id="A4X-uH-T60">
+                    <rect key="frame" x="15" y="64" width="384" height="44"/>
+                    <color key="backgroundColor" name="backgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="44" id="Lv9-LQ-6Px"/>
+                    </constraints>
+                    <textInputTraits key="textInputTraits"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="XCj-Ai-nSR"/>
+                    </connections>
+                </searchBar>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Error block" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="10" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9AV-Zl-Dhr">
+                    <rect key="frame" x="20" y="108" width="374" height="100"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="100" id="PLJ-KF-HwK"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" systemColor="systemPinkColor" red="1" green="0.1764705882" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ket-aW-dh4">
+                    <rect key="frame" x="0.0" y="108" width="414" height="788"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <color key="tintColor" name="backgroundColor"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="azV-8t-Khp"/>
+                        <outlet property="delegate" destination="-1" id="bS1-E9-N8q"/>
+                    </connections>
+                </tableView>
+            </subviews>
+            <color key="backgroundColor" name="backgroundColor"/>
+            <constraints>
+                <constraint firstItem="ket-aW-dh4" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="3FY-dE-xyW"/>
+                <constraint firstItem="9AV-Zl-Dhr" firstAttribute="top" secondItem="A4X-uH-T60" secondAttribute="bottom" id="74x-L4-mT4"/>
+                <constraint firstItem="ket-aW-dh4" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="bottom" id="9E5-px-Du4"/>
+                <constraint firstItem="A4X-uH-T60" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="15" id="CIn-4P-1fJ"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="9AV-Zl-Dhr" secondAttribute="trailing" constant="20" id="G00-6j-2fa"/>
+                <constraint firstItem="ket-aW-dh4" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="RkN-HZ-ovS"/>
+                <constraint firstItem="A4X-uH-T60" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="20" identifier="searchBarTopConstraint" id="ZnT-Kl-Do2"/>
+                <constraint firstItem="ket-aW-dh4" firstAttribute="top" secondItem="A4X-uH-T60" secondAttribute="bottom" id="dkl-PL-mBj"/>
+                <constraint firstItem="A4X-uH-T60" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" constant="-15" id="r7o-qL-rbo"/>
+                <constraint firstItem="9AV-Zl-Dhr" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="wch-fq-JfC"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <point key="canvasLocation" x="137.68115942028987" y="136.60714285714286"/>
+        </view>
+    </objects>
+    <resources>
+        <namedColor name="backgroundColor">
+            <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

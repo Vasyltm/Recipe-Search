@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="Main" customModule="Recipe_Search" customModuleProvider="target">
+            <connections>
+                <outlet property="searchBarMockUp" destination="ziD-JS-WNd" id="YXn-tJ-5bH"/>
+                <outlet property="searchButton" destination="GTM-c9-lsg" id="dyj-Bi-MhM"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <searchBar contentMode="redraw" placeholder="start type here" translatesAutoresizingMaskIntoConstraints="NO" id="ziD-JS-WNd">
+                    <rect key="frame" x="10" y="319" width="384" height="50"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="2zR-8p-FS2"/>
+                    </constraints>
+                    <offsetWrapper key="searchTextPositionAdjustment" horizontal="9" vertical="0.0"/>
+                    <textInputTraits key="textInputTraits"/>
+                </searchBar>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" reversesTitleShadowWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GTM-c9-lsg">
+                    <rect key="frame" x="0.0" y="319" width="414" height="74"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="74" id="w2O-z3-Duz"/>
+                    </constraints>
+                    <size key="titleShadowOffset" width="5" height="7"/>
+                    <state key="normal">
+                        <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                    </state>
+                    <connections>
+                        <action selector="startSearch:" destination="-1" eventType="touchUpInside" id="O5H-z0-eK4"/>
+                    </connections>
+                </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="What do like to cook today?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="H9j-7A-duj">
+                    <rect key="frame" x="0.0" y="279" width="414" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="IJc-1t-bLt"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
+                    <color key="textColor" red="0.0" green="0.474257571130137" blue="0.75420055650684936" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="main" translatesAutoresizingMaskIntoConstraints="NO" id="oFO-7l-dQt">
+                    <rect key="frame" x="79" y="89" width="256" height="180"/>
+                    <constraints>
+                        <constraint firstAttribute="height" relation="lessThanOrEqual" constant="180" id="AL7-X2-mNy"/>
+                    </constraints>
+                </imageView>
+            </subviews>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <constraints>
+                <constraint firstItem="GTM-c9-lsg" firstAttribute="top" secondItem="H9j-7A-duj" secondAttribute="bottom" constant="10" id="7Hs-Ux-jnD"/>
+                <constraint firstItem="GTM-c9-lsg" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="Gcm-Lp-MiE"/>
+                <constraint firstItem="ziD-JS-WNd" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="10" id="KZm-FK-FaG"/>
+                <constraint firstItem="ziD-JS-WNd" firstAttribute="top" secondItem="H9j-7A-duj" secondAttribute="bottom" constant="10" id="UlI-WP-bOf"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="H9j-7A-duj" secondAttribute="trailing" id="Vie-Bc-LCQ"/>
+                <constraint firstItem="ziD-JS-WNd" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" constant="-20" id="aso-B4-ZFu"/>
+                <constraint firstItem="oFO-7l-dQt" firstAttribute="centerX" secondItem="fnl-2z-Ty3" secondAttribute="centerX" id="eb1-1J-cCl"/>
+                <constraint firstItem="H9j-7A-duj" firstAttribute="top" secondItem="oFO-7l-dQt" secondAttribute="bottom" constant="10" id="evi-7S-5tI"/>
+                <constraint firstItem="H9j-7A-duj" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="gtM-3N-dhO"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="GTM-c9-lsg" secondAttribute="trailing" id="kKq-V1-3LU"/>
+                <constraint firstItem="oFO-7l-dQt" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="45" id="pOJ-jT-fWP"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <point key="canvasLocation" x="137.68115942028987" y="119.86607142857142"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="main" width="256" height="256"/>
+    </resources>
+</document>
