@@ -19,6 +19,7 @@ class Main: UIViewController {
         
         searchBarMockUp.hideBorder()
     }
+    
 
     @IBAction func startSearch(_ sender: Any) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
