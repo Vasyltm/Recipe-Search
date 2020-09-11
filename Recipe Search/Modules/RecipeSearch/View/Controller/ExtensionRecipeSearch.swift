@@ -55,6 +55,7 @@ extension RecipeSearch: UITableViewDataSource {
         cell.recipeTitle.text = ""
         
         if viewModel.recipe[indexPath.row].title == "loadView" || cell.recipeTitle.text == "loadView" {
+            cell.isUserInteractionEnabled = false
             cell.recipeImage.layer.opacity = 0
             cell.recipeTitle.layer.opacity = 0
             UIView.animate(withDuration: 1) {
@@ -82,6 +83,7 @@ extension RecipeSearch: UITableViewDataSource {
         let data = viewModel.recipe[indexPath.row].image
         cell.recipeImage.image = data != nil ? UIImage(data: data!) : UIImage(named: "cook")
         
+        cell.isUserInteractionEnabled = true
         return cell
     }
     
