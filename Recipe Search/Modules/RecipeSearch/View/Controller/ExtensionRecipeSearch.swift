@@ -12,10 +12,6 @@ import UIKit
 
 extension RecipeSearch: UISearchBarDelegate {
     
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        errorBlock.isHidden = true
-        viewModel.getRecipes(.getRecipeDynamic, searchFor: searchText)
-    }
     
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -47,29 +43,34 @@ extension RecipeSearch: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! RecipeCell
         
-        guard viewModel.recipe.count != 0 else {
+        guard viewModel.recipe.count != 0, viewModel.recipe.indices.contains(indexPath.row)  else {
             return cell
         }
         
+        cell.backgroundColor = Color.background
         cell.recipeImage.layer.backgroundColor = Color.backgroundCG
         cell.recipeTitle.layer.backgroundColor = Color.backgroundCG
         
         cell.recipeImage.image = nil
-        
         cell.recipeTitle.text = ""
         
-        
-        
         if viewModel.recipe[indexPath.row].title == "loadView" || cell.recipeTitle.text == "loadView" {
-         
-            UIView.animate(withDuration: 1.4, delay: 0.0, options:[UIView.AnimationOptions.repeat, UIView.AnimationOptions.autoreverse], animations: {
-                cell.recipeImage.layer.backgroundColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
-                cell.recipeImage.layer.backgroundColor =  #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+            cell.recipeImage.layer.opacity = 0
+            cell.recipeTitle.layer.opacity = 0
+            UIView.animate(withDuration: 1) {
+                 cell.recipeImage.layer.opacity = 1
+                cell.recipeTitle.layer.opacity = 1
+            }
+            
+            UIView.animate(withDuration: 1, delay: 0.0, options:[UIView.AnimationOptions.repeat, UIView.AnimationOptions.autoreverse], animations: {
+               
+                cell.recipeImage.layer.backgroundColor = Color.tableCellAnimetedFromCG
+                cell.recipeImage.layer.backgroundColor =  Color.tableCellAnimetedToCG
             }, completion: nil)
             
-            UIView.animate(withDuration: 1.4, delay: 0.0, options:[.repeat, UIView.AnimationOptions.autoreverse], animations: {
-                cell.recipeTitle.layer.backgroundColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
-                cell.recipeTitle.layer.backgroundColor =  #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+            UIView.animate(withDuration: 1, delay: 0.0, options:[.repeat, UIView.AnimationOptions.autoreverse], animations: {
+                cell.recipeTitle.layer.backgroundColor = Color.tableCellAnimetedFromCG
+                cell.recipeTitle.layer.backgroundColor =  Color.tableCellAnimetedToCG
             }, completion: nil)
             
             return cell
@@ -87,6 +88,7 @@ extension RecipeSearch: UITableViewDataSource {
 }
 
 
+
 extension RecipeSearch: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -100,10 +102,13 @@ extension RecipeSearch: UITableViewDelegate {
     
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
-        if tableViewRecipe.contentOffset.y >= (tableViewRecipe.contentSize.height - (tableViewRecipe.frame.size.height * 1.5)) {
+        if tableViewRecipe.contentOffset.y >= (tableViewRecipe.contentSize.height - (tableViewRecipe.frame.size.height * 1.5)) && viewModel.isLoadingMoreEnabled {
             if viewModel.isLoadEnabled {
                 errorBlock.isHidden = true
+                tableViewRecipeBottomspinner.color = UIColor.darkGray
+                tableViewRecipeBottomspinner.hidesWhenStopped = true
+                tableViewRecipe.tableFooterView = tableViewRecipeBottomspinner
+                tableViewRecipeBottomspinner.startAnimating()
                 viewModel.getRecipes(.loadMoreRecipes, searchFor: viewModel.search.text)
             }
         }

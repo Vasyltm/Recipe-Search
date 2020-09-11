@@ -20,6 +20,14 @@ enum Color {
         return UIColor(named: "backgroundColor")!.cgColor
     }
     
+    public static var tableCellAnimetedFromCG: CGColor  {
+        return UIColor(named: "tableCellAnimetedFrom")!.cgColor
+    }
+    
+    public static var tableCellAnimetedToCG: CGColor  {
+        return UIColor(named: "tableCellAnimetedTo")!.cgColor
+    }
+    
     
     
     

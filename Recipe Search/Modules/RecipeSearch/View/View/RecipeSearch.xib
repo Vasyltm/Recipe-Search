@@ -34,9 +34,9 @@
                     </connections>
                 </searchBar>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Error block" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="10" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9AV-Zl-Dhr">
-                    <rect key="frame" x="20" y="108" width="374" height="100"/>
+                    <rect key="frame" x="20" y="128" width="374" height="100"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="100" id="PLJ-KF-HwK"/>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="PLJ-KF-HwK"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" systemColor="systemPinkColor" red="1" green="0.1764705882" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -44,7 +44,7 @@
                 </label>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ket-aW-dh4">
                     <rect key="frame" x="0.0" y="108" width="414" height="788"/>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <color key="backgroundColor" name="backgroundColor"/>
                     <color key="tintColor" name="backgroundColor"/>
                     <connections>
                         <outlet property="dataSource" destination="-1" id="azV-8t-Khp"/>
@@ -55,7 +55,7 @@
             <color key="backgroundColor" name="backgroundColor"/>
             <constraints>
                 <constraint firstItem="ket-aW-dh4" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="3FY-dE-xyW"/>
-                <constraint firstItem="9AV-Zl-Dhr" firstAttribute="top" secondItem="A4X-uH-T60" secondAttribute="bottom" id="74x-L4-mT4"/>
+                <constraint firstItem="9AV-Zl-Dhr" firstAttribute="top" secondItem="A4X-uH-T60" secondAttribute="bottom" constant="20" id="74x-L4-mT4"/>
                 <constraint firstItem="ket-aW-dh4" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="bottom" id="9E5-px-Du4"/>
                 <constraint firstItem="A4X-uH-T60" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="15" id="CIn-4P-1fJ"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="9AV-Zl-Dhr" secondAttribute="trailing" constant="20" id="G00-6j-2fa"/>

@@ -23,6 +23,7 @@
 		A2008BD52507AF100060C3D2 /* RecipeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2008BD42507AF100060C3D2 /* RecipeCell.swift */; };
 		A2008BD72507DB6C0060C3D2 /* SearchOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2008BD62507DB6C0060C3D2 /* SearchOption.swift */; };
 		A2008BD92507EB3F0060C3D2 /* UISearchBarExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2008BD82507EB3E0060C3D2 /* UISearchBarExtension.swift */; };
+		A23BF5D8250AC927001F9F2B /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23BF5D7250AC927001F9F2B /* UIViewExtension.swift */; };
 		A2536668250A0BE60060CDCA /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2536667250A0BE60060CDCA /* Errors.swift */; };
 		A2DA5D672508A0C6004EAB7B /* RecipeDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DA5D652508A0C6004EAB7B /* RecipeDetails.swift */; };
 		A2DA5D682508A0C6004EAB7B /* RecipeDetails.xib in Resources */ = {isa = PBXBuildFile; fileRef = A2DA5D662508A0C6004EAB7B /* RecipeDetails.xib */; };
@@ -54,6 +55,7 @@
 		A2008BD42507AF100060C3D2 /* RecipeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeCell.swift; sourceTree = "<group>"; };
 		A2008BD62507DB6C0060C3D2 /* SearchOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchOption.swift; sourceTree = "<group>"; };
 		A2008BD82507EB3E0060C3D2 /* UISearchBarExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UISearchBarExtension.swift; sourceTree = "<group>"; };
+		A23BF5D7250AC927001F9F2B /* UIViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
 		A2536667250A0BE60060CDCA /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		A2DA5D652508A0C6004EAB7B /* RecipeDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetails.swift; sourceTree = "<group>"; };
 		A2DA5D662508A0C6004EAB7B /* RecipeDetails.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RecipeDetails.xib; sourceTree = "<group>"; };
@@ -221,6 +223,7 @@
 			isa = PBXGroup;
 			children = (
 				A2008BD82507EB3E0060C3D2 /* UISearchBarExtension.swift */,
+				A23BF5D7250AC927001F9F2B /* UIViewExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -351,6 +354,7 @@
 				A2008BAD25076E0D0060C3D2 /* Color.swift in Sources */,
 				A2008B87250767E60060C3D2 /* ViewController.swift in Sources */,
 				A2008BA325076A9A0060C3D2 /* RecipeSearch.swift in Sources */,
+				A23BF5D8250AC927001F9F2B /* UIViewExtension.swift in Sources */,
 				A2F23B90250A574600967D88 /* ExtensionRecipeDetails..swift in Sources */,
 				A2DA5D7D250936CB004EAB7B /* Main.swift in Sources */,
 				A2008B83250767E60060C3D2 /* AppDelegate.swift in Sources */,

@@ -10,22 +10,25 @@ import Foundation
 
 
 
-class RecipeSearchViewModel {
+final class RecipeSearchViewModel {
     
     let dispatchGroup = DispatchGroup()
-    var workItem: DispatchWorkItem?
+    
     var updateTableView: () -> () = {  }
     var showError: ((Errors)->()) = {_ in }
     var recipe = [Recipe]()
     var isLoadEnabled = true
+    var isErrorEnabled = true
     var search = SearchOption()
+    var isLoadingMoreEnabled: Bool {
+        self.search.numberOfRecipes == self.search.maxRecipesForCall
+    }
     
     
     func getRecipes(_ action: ChooseAction, searchFor: String = "", onPage: String = "1") {
         
-        
-        guard isLoadEnabled(action, text: searchFor) else { isLoadEnabled = true; return }
-        
+        guard isLoadEnabledWithOptions(action, text: searchFor) else { isLoadEnabled = true; return }
+     
         ServerHandler.request(action, searchFor: search.text, onPage: String(search.page)) { [weak self] response in
             
             guard let self = self else { return }
@@ -38,21 +41,22 @@ class RecipeSearchViewModel {
                     self.updateTableView()
                 case .success(let data):
                     if action != .loadMoreRecipes{
-                        self.recipe = []
+                        self.recipe = []  /// delete animated tableView cells
                     }
                     self.search.numberOfRecipes = data["count"] as? Int ?? 0
                     let recipeData = data["recipes"] as? [[String: Any]] ?? []
+                    
+                    let imageQueue = DispatchQueue(label: "my")
                     for value in recipeData {
+                        
                         let id = value["recipe_id"] as? String ?? ""
                         let imageStringURL = value["image_url"] as? String ?? ""
                         let sourceURL = value["source_url"] as? String ?? ""
                         let title = value["title"] as? String ?? ""
                         var recipe = Recipe(id: id, image_url: imageStringURL, source_url: sourceURL, title: title)
-                        guard let imagrURL = URL(string: imageStringURL)  else {self.isLoadEnabled = true;  return }
-                        self.workItem = DispatchWorkItem  { [weak self] in
-                            guard let self = self else {return}
-                            
-                            self.dispatchGroup.enter()
+                        
+                        imageQueue.async(group: self.dispatchGroup) {
+                            guard let imagrURL = URL(string: imageStringURL)  else {self.isLoadEnabled = true;  return }
                             do {
                                 let data = try  Data(contentsOf: imagrURL)
                                 if  recipe.image == nil {
@@ -62,20 +66,12 @@ class RecipeSearchViewModel {
                             } catch {
                                 print("error loading image")
                             }
-                            self.dispatchGroup.leave()
-                            
-                            
                         }
-                        
-                        DispatchQueue.global().async(execute: self.workItem!)
-                        
-                        
                     }
                     
                     self.dispatchGroup.notify(queue: .global()) {
-                        sleep(1)
+                        if self.recipe.count == 0  && self.isErrorEnabled { self.showError(.nothingFound); self.isErrorEnabled = false }
                         self.updateTableView()
-                        if self.recipe.count == 0 {  self.showError(.nothingFound) }
                         self.isLoadEnabled = true
                 }
             }
@@ -83,23 +79,19 @@ class RecipeSearchViewModel {
     }
     
     
-    private func isLoadEnabled (_ action: ChooseAction, text: String) -> Bool {
+    private func isLoadEnabledWithOptions(_ action: ChooseAction, text: String) -> Bool {
         
-        guard text.count >= 3 else {self.recipe = []; self.updateTableView(); return false}
-      
+        if text.count < 3 && action == .getRecipeOnSearchButton   { self.showError(.searchInputTooShort); self.recipe = []; self.updateTableView(); return false}
+        
         isLoadEnabled = false
         
         switch action {
-            case let action where action == .getRecipeDynamic && text == "":
-                self.recipe = []; updateTableView()
-                return false
-            case .getRecipeDynamic, .getRecipeOnSearchButton:
+            case  .getRecipeOnSearchButton:
                 self.recipe = []
-                workItem?.cancel()
                 search.text = text
                 search.page = 1
                 let recipes = Recipe(id: "", image_url: "", source_url: "", title: "loadView")
-                for _ in 0...5 {
+                for _ in 0...10 {
                     recipe.append(recipes)
                 }
                 self.updateTableView()
@@ -109,7 +101,6 @@ class RecipeSearchViewModel {
                 return true
             default: return false
         }
-        
         
     }
     

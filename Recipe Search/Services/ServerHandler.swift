@@ -12,7 +12,6 @@ import Foundation
 
 
 public enum ChooseAction {
-    case getRecipeDynamic
     case getRecipeOnSearchButton
     case loadMoreRecipes
     case getIngradients
@@ -21,7 +20,7 @@ public enum ChooseAction {
 
 struct ServerHandler {
     
-    static func request (_ action: ChooseAction = .getRecipeDynamic, searchFor: String = "", onPage: String = "1", completion: @escaping (Result<[String: Any], Error>) -> Void)  {
+    static func request (_ action: ChooseAction = .getRecipeOnSearchButton, searchFor: String = "", onPage: String = "1", completion: @escaping (Result<[String: Any], Error>) -> Void)  {
         
         var api = "https://recipesapi.herokuapp.com/api/"
         
@@ -30,7 +29,7 @@ struct ServerHandler {
         config.timeoutIntervalForResource = 20
         
         switch action {
-            case .getRecipeDynamic, .loadMoreRecipes, .getRecipeOnSearchButton:
+            case .loadMoreRecipes, .getRecipeOnSearchButton:
                 api = api + "search?q=" + String(searchFor.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "") + "&page=" + onPage
             case .getIngradients:
                 api = api + "get?rId=" + searchFor
@@ -57,9 +56,9 @@ struct ServerHandler {
                 return
             }
             
-            if let response = response  {
-                print(response)
-            }
+//            if let response = response  {
+//                print(response)
+//            }
             
             do {
                 if let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any] {
