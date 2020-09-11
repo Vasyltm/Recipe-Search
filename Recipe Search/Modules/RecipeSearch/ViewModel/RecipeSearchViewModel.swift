@@ -61,7 +61,7 @@ final class RecipeSearchViewModel {
                                 let data = try  Data(contentsOf: imagrURL)
                                 if  recipe.image == nil {
                                     recipe.image = data
-                                    self.recipe.insert(recipe, at: 0)
+                                    self.recipe.append(recipe)
                                 }
                             } catch {
                                 print("error loading image")
