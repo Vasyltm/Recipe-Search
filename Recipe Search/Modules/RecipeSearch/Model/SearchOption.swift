@@ -15,5 +15,9 @@ struct SearchOption {
     var page = 1
     var numberOfRecipes = 0
     let maxRecipesForCall = 30
+    var numbersOfAnimatedCells: Int {
+        return 20
+    }
+    var isAnimatedCellsEnabled = true
 }
  

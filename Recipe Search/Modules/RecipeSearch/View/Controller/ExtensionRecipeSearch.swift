@@ -11,9 +11,7 @@ import UIKit
 
 
 extension RecipeSearch: UISearchBarDelegate {
-    
-    
-    
+
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         errorBlock.isHidden = true
         viewModel.getRecipes(.getRecipeOnSearchButton, searchFor: searchBar.text ?? "")
@@ -36,8 +34,12 @@ extension RecipeSearch: UISearchBarDelegate {
 
 extension RecipeSearch: UITableViewDataSource {
     
+   
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return  viewModel.recipe.count
+        switch viewModel.search.isAnimatedCellsEnabled {
+            case true: return viewModel.search.numbersOfAnimatedCells
+            case false: return viewModel.recipe.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -46,7 +48,7 @@ extension RecipeSearch: UITableViewDataSource {
         guard viewModel.recipe.count != 0, viewModel.recipe.indices.contains(indexPath.row)  else {
             return cell
         }
-        
+               
         cell.backgroundColor = Color.background
         cell.recipeImage.layer.backgroundColor = Color.backgroundCG
         cell.recipeTitle.layer.backgroundColor = Color.backgroundCG
@@ -54,7 +56,7 @@ extension RecipeSearch: UITableViewDataSource {
         cell.recipeImage.image = nil
         cell.recipeTitle.text = ""
         
-        if viewModel.recipe[indexPath.row].title == "loadView" || cell.recipeTitle.text == "loadView" {
+        if viewModel.recipe[indexPath.row].title == "loadView" || cell.recipeTitle.text == "loadView"   {
             cell.isUserInteractionEnabled = false
             cell.recipeImage.layer.opacity = 0
             cell.recipeTitle.layer.opacity = 0
@@ -73,11 +75,12 @@ extension RecipeSearch: UITableViewDataSource {
                 cell.recipeTitle.layer.backgroundColor = Color.tableCellAnimetedFromCG
                 cell.recipeTitle.layer.backgroundColor =  Color.tableCellAnimetedToCG
             }, completion: nil)
-            
+         
             return cell
             
         }
         
+       
         cell.recipeTitle.text = viewModel.recipe[indexPath.row].title
         
         let data = viewModel.recipe[indexPath.row].image
@@ -92,6 +95,8 @@ extension RecipeSearch: UITableViewDataSource {
 
 
 extension RecipeSearch: UITableViewDelegate {
+    
+   
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.showDetailViewController(UINavigationController(rootViewController:ModuleBuilder.buildRecipeDetails(recipe:  viewModel.recipe[indexPath.row])), sender: nil)

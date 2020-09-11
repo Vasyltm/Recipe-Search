@@ -8,6 +8,22 @@
 
 import UIKit
 
+extension UITableView {
+    var dataHasChanged: Bool {
+        guard let dataSource = dataSource else { return false }
+        let sections = dataSource.numberOfSections?(in: self) ?? 0
+        if numberOfSections != sections {
+            return true
+        }
+        for section in 0..<sections {
+            if numberOfRows(inSection: section) != dataSource.tableView(self, numberOfRowsInSection: section) {
+                return true
+            }
+        }
+        return false
+    }
+}
+
 class RecipeSearch: UIViewController  {
     
     @IBOutlet weak var searchBar: UISearchBar!
@@ -15,6 +31,7 @@ class RecipeSearch: UIViewController  {
     @IBOutlet weak var errorBlock: UILabel!
     let tableViewRecipeBottomspinner = UIActivityIndicatorView(style: .gray)
     var viewModel = RecipeSearchViewModel()
+  
     
     
     override func viewDidLoad() {
@@ -22,6 +39,7 @@ class RecipeSearch: UIViewController  {
         
         tableViewRecipe.register(RecipeCell.self, forCellReuseIdentifier: "Cell")
         setErrorBlock()
+        updateTableViewByIndex()
         searchBar.hideBorder()
         updateTableView()
         showError()
@@ -52,6 +70,15 @@ class RecipeSearch: UIViewController  {
                 UIView.animate(withDuration: 0.5) {
                     self?.tableViewRecipe.layer.opacity = 1
                 }
+            }
+        }
+    }
+    
+    
+    func updateTableViewByIndex() {
+        viewModel.updateTableViewByIndex = { [weak self] index in
+            DispatchQueue.main.async {
+                self?.tableViewRecipe.reloadRows(at: [IndexPath(row: index, section: 0)], with: .top)
             }
         }
     }
