@@ -68,6 +68,7 @@ extension RecipeSearch: UITableViewDataSource {
         cell.recipeTitle.text = ""
         
         if viewModel.recipe[indexPath.row].title == "loadView" || cell.recipeTitle.text == "loadView"   {
+        print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
             cell.isUserInteractionEnabled = false
             cell.recipeImage.layer.opacity = 0
             cell.recipeTitle.layer.opacity = 0

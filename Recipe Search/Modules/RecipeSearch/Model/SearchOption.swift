@@ -21,7 +21,7 @@ struct SearchOption {
     var isAnimatedCellsEnabled = true
     
     var shouldReloadSearch: Bool? = false
-    var numbersOfCells = 5
-    var searchCount = 0
+    lazy var numbersOfCells = numbersOfAnimatedCells
+    var numberOfRecipesForCall = 0
 }
  

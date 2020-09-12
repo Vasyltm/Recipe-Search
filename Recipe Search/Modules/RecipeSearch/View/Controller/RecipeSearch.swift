@@ -80,14 +80,16 @@ class RecipeSearch: UIViewController  {
         viewModel.updateTableViewCellAmount = { [weak self] numberOfCells in
             guard let self = self else { return }
             DispatchQueue.main.async {
-                print("gggggogooooooooo")
-                var indexPath = [IndexPath(row: 5, section: 0)]
-                for i in self.viewModel.search.numbersOfAnimatedCells + 1...numberOfCells - 1 {
+                if self.tableViewRecipeBottomspinner.isAnimating {
+                    self.tableViewRecipeBottomspinner.stopAnimating()
+                }
+                var indexPath = [IndexPath(row: numberOfCells, section: 0)]
+                for i in numberOfCells...self.viewModel.search.numberOfRecipesForCall + numberOfCells - 1 {
                     indexPath.append(IndexPath(row: i, section: 0))
                 }
                 print(indexPath)
                 self.tableViewRecipe.beginUpdates()
-                self.tableViewRecipe.insertRows(at: indexPath, with: .automatic)
+                self.tableViewRecipe.insertRows(at: indexPath, with: .middle)
                 self.tableViewRecipe.endUpdates()
                 
             }
@@ -98,8 +100,9 @@ class RecipeSearch: UIViewController  {
     func updateTableViewByIndex() {
         viewModel.updateTableViewByIndex = { [weak self] index in
             DispatchQueue.main.async {
+                
                 self?.tableViewRecipe.beginUpdates()
-                self?.tableViewRecipe.reloadRows(at: [IndexPath(row: index, section: 0)], with: .top)
+                self?.tableViewRecipe.reloadRows(at: [IndexPath(row: index, section: 0)], with: .left)
                 self?.tableViewRecipe.endUpdates()
             }
         }
