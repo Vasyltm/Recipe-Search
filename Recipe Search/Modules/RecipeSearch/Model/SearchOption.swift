@@ -19,5 +19,9 @@ struct SearchOption {
         return 20
     }
     var isAnimatedCellsEnabled = true
+    
+    var shouldReloadSearch: Bool? = false
+    var numbersOfCells = 5
+    var searchCount = 0
 }
  

@@ -11,7 +11,16 @@ import UIKit
 
 
 extension RecipeSearch: UISearchBarDelegate {
-
+    
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//        viewModel.search.searchCount += 1
+//        errorBlock.isHidden = true
+//        viewModel.getRecipes(.getRecipeOnSearchButton, searchFor: searchBar.text ?? "")
+//        viewModel.search.shouldReloadSearch = true
+    }
+    
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         errorBlock.isHidden = true
         viewModel.getRecipes(.getRecipeOnSearchButton, searchFor: searchBar.text ?? "")
@@ -36,15 +45,17 @@ extension RecipeSearch: UITableViewDataSource {
     
    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch viewModel.search.isAnimatedCellsEnabled {
-            case true: return viewModel.search.numbersOfAnimatedCells
-            case false: return viewModel.recipe.count
-        }
+        print("viewModel.search.numbersOfCells \(viewModel.search.numbersOfCells)")
+        return viewModel.search.numbersOfCells
+//        switch viewModel.search.isAnimatedCellsEnabled {
+//            case true: return viewModel.search.numbersOfAnimatedCells
+//            case false: return viewModel.recipe.count
+//        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! RecipeCell
-        
+        print(indexPath)
         guard viewModel.recipe.count != 0, viewModel.recipe.indices.contains(indexPath.row)  else {
             return cell
         }
