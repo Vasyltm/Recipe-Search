@@ -13,14 +13,6 @@ import UIKit
 extension RecipeSearch: UISearchBarDelegate {
     
     
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        viewModel.search.searchCount += 1
-//        errorBlock.isHidden = true
-//        viewModel.getRecipes(.getRecipeOnSearchButton, searchFor: searchBar.text ?? "")
-//        viewModel.search.shouldReloadSearch = true
-    }
-    
-    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         errorBlock.isHidden = true
         viewModel.getRecipes(.getRecipeOnSearchButton, searchFor: searchBar.text ?? "")
@@ -45,12 +37,7 @@ extension RecipeSearch: UITableViewDataSource {
     
    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("viewModel.search.numbersOfCells \(viewModel.search.numbersOfCells)")
         return viewModel.search.numbersOfCells
-//        switch viewModel.search.isAnimatedCellsEnabled {
-//            case true: return viewModel.search.numbersOfAnimatedCells
-//            case false: return viewModel.recipe.count
-//        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -68,7 +55,6 @@ extension RecipeSearch: UITableViewDataSource {
         cell.recipeTitle.text = ""
         
         if viewModel.recipe[indexPath.row].title == "loadView" || cell.recipeTitle.text == "loadView"   {
-        print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
             cell.isUserInteractionEnabled = false
             cell.recipeImage.layer.opacity = 0
             cell.recipeTitle.layer.opacity = 0
