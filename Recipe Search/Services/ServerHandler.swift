@@ -20,13 +20,22 @@ public enum ChooseAction {
 
 struct ServerHandler {
     
-    static func request (_ action: ChooseAction = .getRecipeOnSearchButton, searchFor: String = "", onPage: String = "1", completion: @escaping (Result<[String: Any], Error>) -> Void)  {
-        
-        var api = "https://recipesapi.herokuapp.com/api/"
-        
+    
+    let config: URLSessionConfiguration = {
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
         config.timeoutIntervalForResource = 20
+        return config
+    }()
+    var task: URLSessionDataTask?
+    
+    lazy var session = URLSession(configuration: config)
+    
+    mutating func request (_ action: ChooseAction = .getRecipeOnSearchButton, searchFor: String = "", onPage: String = "1", completion: @escaping (Result<[String: Any], Error>) -> Void) {
+        
+        var api = "https://recipesapi.herokuapp.com/api/"
+        
+        
         
         switch action {
             case .loadMoreRecipes, .getRecipeOnSearchButton:
@@ -43,13 +52,13 @@ struct ServerHandler {
         }
         
         
-        let session = URLSession(configuration: config)
+        
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
 
         
         
-        let task = session.dataTask(with: request) { data, response, error in
+         task = session.dataTask(with: request) { data, response, error in
             
             guard error == nil else {
                 completion(.failure(error!))
@@ -69,8 +78,8 @@ struct ServerHandler {
             }
             
         }
-        task.resume()
-        session.finishTasksAndInvalidate()
+        task?.resume()
+       // session.finishTasksAndInvalidate()
         
     }
     

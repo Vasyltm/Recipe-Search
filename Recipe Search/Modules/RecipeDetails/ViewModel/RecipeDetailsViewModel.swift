@@ -13,9 +13,10 @@ class RecipeDetailsViewModel {
     
     var recipe: Recipe
     var updateIngradients: (()->()) = {}
+    var serverHandler = ServerHandler()
     
     func getIngradients(recipeId: String) {
-        ServerHandler.request(.getIngradients, searchFor: recipeId) { [weak self] response in
+        serverHandler.request(.getIngradients, searchFor: recipeId) { [weak self] response in
             guard let self = self else { return }
             switch response {
                 case .failure(let error): print(error.localizedDescription)

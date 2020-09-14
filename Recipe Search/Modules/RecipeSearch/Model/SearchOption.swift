@@ -11,17 +11,15 @@ import Foundation
 
 
 struct SearchOption {
+    var taskId = 0
     var text = ""
     var page = 1
-    var numberOfRecipes = 0
+    var numberOfRecipesForCall = 0
+    var numberOfRecipesTotal = 0
     let maxRecipesForCall = 30
     var numbersOfAnimatedCells: Int {
         return 20
     }
-    var isAnimatedCellsEnabled = true
-    
-    var shouldReloadSearch: Bool? = false
-    lazy var numbersOfCells = numbersOfAnimatedCells
-    var numberOfRecipesForCall = 0
+    var isLoadMoreEnabled = true
 }
  

@@ -13,9 +13,15 @@ import UIKit
 extension RecipeSearch: UISearchBarDelegate {
     
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         errorBlock.isHidden = true
         viewModel.getRecipes(.getRecipeOnSearchButton, searchFor: searchBar.text ?? "")
+    }
+    
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        errorBlock.isHidden = true
+        //viewModel.getRecipes(.getRecipeOnSearchButton, searchFor: searchBar.text ?? "")
         searchBar.resignFirstResponder()
     }
 
@@ -37,22 +43,26 @@ extension RecipeSearch: UITableViewDataSource {
     
    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.search.numbersOfCells
+        print("numberOfRowsInSection: \(viewModel.recipe.count)")
+        return viewModel.recipe.count
+        //return viewModel.search.numbersOfCells
     }
+    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! RecipeCell
-        print(indexPath)
         guard viewModel.recipe.count != 0, viewModel.recipe.indices.contains(indexPath.row)  else {
             return cell
         }
-               
+        print("indexPath \(indexPath)")
         cell.backgroundColor = Color.background
         cell.recipeImage.layer.backgroundColor = Color.backgroundCG
         cell.recipeTitle.layer.backgroundColor = Color.backgroundCG
         
         cell.recipeImage.image = nil
         cell.recipeTitle.text = ""
+        
+   
         
         if viewModel.recipe[indexPath.row].title == "loadView" || cell.recipeTitle.text == "loadView"   {
             cell.isUserInteractionEnabled = false
@@ -108,7 +118,7 @@ extension RecipeSearch: UITableViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if tableViewRecipe.contentOffset.y >= (tableViewRecipe.contentSize.height - (tableViewRecipe.frame.size.height * 1.5)) && viewModel.isLoadingMoreEnabled {
-            if viewModel.isLoadEnabled {
+            if viewModel.search.isLoadMoreEnabled {
                 errorBlock.isHidden = true
                 tableViewRecipeBottomspinner.color = UIColor.darkGray
                 tableViewRecipeBottomspinner.hidesWhenStopped = true

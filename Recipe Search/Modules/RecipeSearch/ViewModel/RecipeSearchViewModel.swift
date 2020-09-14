@@ -13,50 +13,81 @@ import Foundation
 final class RecipeSearchViewModel {
     
     let dispatchGroup = DispatchGroup()
-    
+    var serverHandler = ServerHandler()
     var updateTableView: () -> () = {  }
+    
+    //MARK: add 1 property to share cell from to
     var updateTableViewCellAmount: (Int) -> () = { _ in }
+    
+    
     var updateTableViewByIndex: (Int) -> () = { _ in  }
     var showError: ((Errors)->()) = {_ in }
     var recipe = [Recipe]()
-    var isLoadEnabled = true
     var isErrorEnabled = true
     var search = SearchOption()
     var isLoadingMoreEnabled: Bool {
-        self.search.numberOfRecipes == self.search.maxRecipesForCall
+        self.search.numberOfRecipesTotal == self.search.maxRecipesForCall
     }
     
     
     func getRecipes(_ action: ChooseAction, searchFor: String = "", onPage: String = "1") {
         
-        guard isLoadEnabledWithOptions(action, text: searchFor) else { isLoadEnabled = true; return }
-   
-        ServerHandler.request(action, searchFor: search.text, onPage: String(search.page)) { [weak self] response in
-            
+        if serverHandler.task?.state != nil && action == .getRecipeOnSearchButton {
+            serverHandler.task?.cancel()
+        }
+        self.search.taskId += 1
+        let imageQueue = DispatchQueue(label: "\(self.search.taskId)")
+        
+        guard isLoadEnabledWithOptions(action, text: searchFor) else { search.isLoadMoreEnabled = true; return }
+        
+        serverHandler.request(action, searchFor: search.text, onPage: String(search.page)) { [weak self] response in
             guard let self = self else { return }
             switch response {
                 case .failure(let error):
-                    print(error.localizedDescription)
-                    self.showError(.serverConectionError)
-                    self.isLoadEnabled = true
-                    self.recipe = []
-                    self.search.numbersOfCells = 0
-                    self.updateTableView()
+                    if !error.localizedDescription.contains("cancelled") {
+                        print(error.localizedDescription)
+                        self.showError(.serverConectionError)
+                        self.search.isLoadMoreEnabled = true
+                        self.recipe = []
+                        self.updateTableView()
+                }
+                
                 case .success(let data):
-                    if action != .loadMoreRecipes{
-                        self.recipe = []  /// delete animated tableView cells
-                    }
-                    
+                    if self.search.taskId == 254 { self.search.taskId = 1 }
                     self.search.numberOfRecipesForCall = data["count"] as? Int ?? 0
-                    guard self.search.numberOfRecipesForCall > 0 else { self.updateTableView(); self.search.numbersOfCells = 0; self.showError(.nothingFound) ; return }
-                    self.search.numberOfRecipes = data["count"] as? Int ?? 0
-                    self.updateTableViewCellAmount(self.search.numbersOfCells)
-                    self.search.numbersOfCells += self.search.numberOfRecipesForCall
+                    guard self.search.numberOfRecipesForCall > 0 else {
+                        self.updateTableView()
+                        self.recipe = []
+                        self.showError(.nothingFound)
+                        return
+                    }
+                    self.search.numberOfRecipesTotal = data["count"] as? Int ?? 0
                     let recipeData = data["recipes"] as? [[String: Any]] ?? []
                     
-                    let imageQueue = DispatchQueue(label: "my")
+                    
+                    print("numberOfRecipesForCall \(self.search.numberOfRecipesForCall)")
+                    if  self.recipe.count < self.search.numberOfRecipesTotal {
+                        self.recipe = []  /// delete animated tableView cells
+                        print(">>>>>>>>\(self.search.numbersOfAnimatedCells)..\(self.search.numberOfRecipesForCall)")
+                        for _  in recipeData {
+                            let recipe = Recipe(id: "", image_url: "", source_url: "", title: "")
+                            self.recipe.append(recipe)
+                        }
+                        switch action {
+                            case .getRecipeOnSearchButton: self.updateTableViewCellAmount(self.search.numbersOfAnimatedCells)
+                            case .loadMoreRecipes: self.updateTableViewCellAmount(self.search.numberOfRecipesTotal)
+                            default: return
+                        }
+                        
+                    }
+                    
+                    
+                    
+                    
+                    
                     
                     loop: for (index, value) in recipeData.enumerated(){
+                        
                         let id = value["recipe_id"] as? String ?? ""
                         let imageStringURL = value["image_url"] as? String ?? ""
                         let sourceURL = value["source_url"] as? String ?? ""
@@ -64,24 +95,17 @@ final class RecipeSearchViewModel {
                         var recipe = Recipe(id: id, image_url: imageStringURL, source_url: sourceURL, title: title)
                         
                         imageQueue.async(group: self.dispatchGroup) {
-                            guard let imagrURL = URL(string: imageStringURL)  else {self.isLoadEnabled = true;  return }
+                            
+                            guard String(self.search.taskId) == imageQueue.label, let imagrURL = URL(string: imageStringURL), self.recipe.indices.contains(index)  else { return }
+                            print(imageQueue.label)
                             do {
                                 let data = try Data(contentsOf: imagrURL)
                                 if  recipe.image == nil {
                                     recipe.image = data
-                                    self.recipe.append(recipe)
-                                    print("before")
-                                    if index <  self.search.numbersOfAnimatedCells {
+                                    if index <  self.recipe.count {
                                         
-                                        
-                                        
-                                        if self.search.numberOfRecipes < self.search.numbersOfAnimatedCells {
-                                            if index == self.search.numberOfRecipes - 1 {
-                                                self.search.isAnimatedCellsEnabled = false
-                                                self.search.numbersOfCells = self.search.numberOfRecipes
-                                                self.updateTableView()
-                                            }
-                                        }
+                                        print("number of recipes: \(self.recipe.count )  and index is \(index)")
+                                        self.recipe[index] = recipe
                                         self.updateTableViewByIndex(index)
                                     }
                                 }
@@ -92,13 +116,26 @@ final class RecipeSearchViewModel {
                     }
                     
                     self.dispatchGroup.notify(queue: .global()) {
-                        if self.recipe.count == 0  && self.isErrorEnabled { self.showError(.nothingFound); self.search.numbersOfCells = 0; self.updateTableView(); self.isErrorEnabled = false }
-                        if action == .getRecipeOnSearchButton || self.search.numberOfRecipes < self.search.numbersOfAnimatedCells {
-                            self.search.isAnimatedCellsEnabled = false
+                        if self.search.numberOfRecipesForCall < self.search.numbersOfAnimatedCells {
+                         //   if index == self.search.numberOfRecipes - 1 {
+                         //   self.recipe = []
+                                self.updateTableView()
+                          //  }
                         }
-                        
-                        
-                        self.isLoadEnabled = true
+                        self.search.isLoadMoreEnabled = true
+                        //                        if self.recipe.count == 0  && self.isErrorEnabled {
+                        //                            self.showError(.nothingFound);
+                        //                            self.search.numbersOfCells = 0;
+                        //                            self.updateTableView();
+                        //                            self.isErrorEnabled = false
+                        //
+                        //                        }
+                        //                        if action == .getRecipeOnSearchButton || self.search.numberOfRecipes < self.search.numbersOfAnimatedCells {
+                        //                            self.search.isAnimatedCellsEnabled = false
+                        //                        }
+                        //
+                        //
+                        //                        self.isLoadEnabled = true
                 }
             }
         }
@@ -106,27 +143,21 @@ final class RecipeSearchViewModel {
     
     
     private func isLoadEnabledWithOptions(_ action: ChooseAction, text: String) -> Bool {
-        
-        if text.count < 3 && action == .getRecipeOnSearchButton   { showError(.searchInputTooShort); recipe = []; updateTableView(); return false}
-        
-        isLoadEnabled = false
+     
         
         switch action {
             case  .getRecipeOnSearchButton:
                 self.recipe = []
                 search.text = text
                 search.page = 1
-                search.numbersOfCells = search.numbersOfAnimatedCells
                 let recipes = Recipe(id: "", image_url: "", source_url: "", title: "loadView")
                 for _ in 0..<self.search.numbersOfAnimatedCells {
                     recipe.append(recipes)
                 }
-                self.search.isAnimatedCellsEnabled = true
                 updateTableView()
                 return true
-            case let action where action == .loadMoreRecipes && self.search.numberOfRecipes == self.search.maxRecipesForCall:
+            case let action where action == .loadMoreRecipes && self.search.numberOfRecipesForCall == self.search.maxRecipesForCall:
                 search.page += 1
-                self.search.isAnimatedCellsEnabled = false
                 return true
             default: return false
         }
