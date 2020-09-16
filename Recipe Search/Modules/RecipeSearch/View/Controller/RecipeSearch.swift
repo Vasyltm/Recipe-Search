@@ -42,7 +42,8 @@ class RecipeSearch: UIViewController  {
         updateTableViewByIndex()
         searchBar.hideBorder()
         updateTableView()
-        updateTableViewCells()
+//        addTableViewCells()
+//        deleteTableViewCells()
         showError()
     }
     
@@ -66,42 +67,66 @@ class RecipeSearch: UIViewController  {
                 if self?.tableViewRecipeBottomspinner.isAnimating ?? true {
                     self?.tableViewRecipeBottomspinner.stopAnimating()
                 }
-                self?.tableViewRecipe.layer.opacity = 0
+//                self?.tableViewRecipe.layer.opacity = 0
                 self?.tableViewRecipe.reloadData()
-                UIView.animate(withDuration: 0.5) {
-                    self?.tableViewRecipe.layer.opacity = 1
-                }
+//                UIView.animate(withDuration: 0.5) {
+//                    self?.tableViewRecipe.layer.opacity = 1
+//                }
             }
         }
     }
     
     
-    func updateTableViewCells() {
-        viewModel.updateTableViewCellAmount = { [weak self] from in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                if self.tableViewRecipeBottomspinner.isAnimating {
-                    self.tableViewRecipeBottomspinner.stopAnimating()
-                }
-                print("Range \(from)...\(self.viewModel.recipe.count  - 1)")
-                var indexPath = [IndexPath(row: from, section: 0)]
-                for i in from + 1..<self.viewModel.recipe.count {
-               // for i in from...self.viewModel.search.numberOfRecipesForCall + from - 1 {
-                    indexPath.append(IndexPath(row: i, section: 0))
-                }
-                print("indexPath to add cells \(indexPath)")
-                self.tableViewRecipe.beginUpdates()
-                self.tableViewRecipe.insertRows(at: indexPath, with: .middle)
-                self.tableViewRecipe.endUpdates()
-                
-            }
-        }
-    }
+//    func addTableViewCells() {
+//        viewModel.addTableViewCells = { [weak self] from, to in
+//            guard let self = self else { return }
+//            print("error in add tableview")
+//            DispatchQueue.main.async {
+//                if self.tableViewRecipeBottomspinner.isAnimating {
+//                    self.tableViewRecipeBottomspinner.stopAnimating()
+//                }
+//                print("Range \(from)...\(to  - 1)")
+//                var indexPath = [IndexPath(row: from, section: 0)]
+//                for i in from + 1..<to {
+//                    indexPath.append(IndexPath(row: i, section: 0))
+//                }
+//                print("indexPath to add cells \(indexPath)")
+//                print("I want to see tows in add: \(self.tableViewRecipe.numberOfRows(inSection: 0)) while recipe is \(self.viewModel.recipe.count) and other \(self.viewModel.search.numberOfRecipesForCall)")
+//                guard self.tableViewRecipe.numberOfRows(inSection: 0) != self.viewModel.recipe.count else { print("error in add catched"); return }
+//                guard self.tableViewRecipe.numberOfRows(inSection: 0) == self.viewModel.search.numbersOfAnimatedCells else { print("error2 in add catched"); return }
+//                self.tableViewRecipe.beginUpdates()
+//                self.tableViewRecipe.insertRows(at: indexPath, with: .middle)
+//                self.tableViewRecipe.endUpdates()
+//                self.viewModel.isUpdateAvailable = true
+//            }
+//        }
+//    }
+    
+    
+//    func deleteTableViewCells() {
+//        viewModel.deleteTableViewCells = { [weak self] from, to in
+//            guard let self = self else { return }
+//            DispatchQueue.main.async {
+//                var indexPath = [IndexPath(row: from, section: 0)]
+//                for i in from + 1..<to {
+//                    indexPath.append(IndexPath(row: i, section: 0))
+//                }
+//                print("error in delete tableview")
+//                print("I want to see tows in delete: \(self.tableViewRecipe.numberOfRows(inSection: 0)) while recipe is \(self.viewModel.recipe.count)")
+//                print("indexPath to delete cells \(indexPath)")
+//                self.tableViewRecipe.beginUpdates()
+//                self.tableViewRecipe.deleteRows(at: indexPath, with: .middle)
+//                self.tableViewRecipe.endUpdates()
+//            }
+//        }
+//    }
     
     
     func updateTableViewByIndex() {
         viewModel.updateTableViewByIndex = { [weak self] index in
             DispatchQueue.main.async {
+                // check race condition
+                guard self?.tableViewRecipe.numberOfRows(inSection: 0) == self?.viewModel.recipe.count else { print ("error cathed in updateTableViewByIndex");return }
                 self?.tableViewRecipe.reloadRows(at: [IndexPath(row: index, section: 0)], with: .fade)
             }
         }
@@ -113,7 +138,7 @@ class RecipeSearch: UIViewController  {
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.errorBlock.fadeIn()
-                self.viewModel.isErrorEnabled = true
+               // self.viewModel.isErrorEnabled = true
                 self.errorBlock.text = error.description
             }
         }

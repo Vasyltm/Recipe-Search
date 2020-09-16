@@ -24,7 +24,7 @@ struct ServerHandler {
     let config: URLSessionConfiguration = {
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
-        config.timeoutIntervalForResource = 20
+        config.timeoutIntervalForResource = 200
         return config
     }()
     var task: URLSessionDataTask?
@@ -79,7 +79,6 @@ struct ServerHandler {
             
         }
         task?.resume()
-       // session.finishTasksAndInvalidate()
         
     }
     

@@ -15,11 +15,15 @@ struct SearchOption {
     var text = ""
     var page = 1
     var numberOfRecipesForCall = 0
-    var numberOfRecipesTotal = 0
+    var numberOfRecipesFromLastCall = 0
     let maxRecipesForCall = 30
     var numbersOfAnimatedCells: Int {
         return 20
     }
-    var isLoadMoreEnabled = true
+    var isLoadCompleted = false
+    var delayLoad = false
+    var isLoadingMoreEnabled: Bool {
+        numberOfRecipesForCall == maxRecipesForCall
+    }
 }
  

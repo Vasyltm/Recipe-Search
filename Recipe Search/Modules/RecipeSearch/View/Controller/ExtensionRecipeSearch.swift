@@ -20,8 +20,6 @@ extension RecipeSearch: UISearchBarDelegate {
     
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        errorBlock.isHidden = true
-        //viewModel.getRecipes(.getRecipeOnSearchButton, searchFor: searchBar.text ?? "")
         searchBar.resignFirstResponder()
     }
 
@@ -43,9 +41,7 @@ extension RecipeSearch: UITableViewDataSource {
     
    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("numberOfRowsInSection: \(viewModel.recipe.count)")
         return viewModel.recipe.count
-        //return viewModel.search.numbersOfCells
     }
     
     
@@ -54,7 +50,6 @@ extension RecipeSearch: UITableViewDataSource {
         guard viewModel.recipe.count != 0, viewModel.recipe.indices.contains(indexPath.row)  else {
             return cell
         }
-        print("indexPath \(indexPath)")
         cell.backgroundColor = Color.background
         cell.recipeImage.layer.backgroundColor = Color.backgroundCG
         cell.recipeTitle.layer.backgroundColor = Color.backgroundCG
@@ -62,7 +57,6 @@ extension RecipeSearch: UITableViewDataSource {
         cell.recipeImage.image = nil
         cell.recipeTitle.text = ""
         
-   
         
         if viewModel.recipe[indexPath.row].title == "loadView" || cell.recipeTitle.text == "loadView"   {
             cell.isUserInteractionEnabled = false
@@ -117,15 +111,15 @@ extension RecipeSearch: UITableViewDelegate {
     
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if tableViewRecipe.contentOffset.y >= (tableViewRecipe.contentSize.height - (tableViewRecipe.frame.size.height * 1.5)) && viewModel.isLoadingMoreEnabled {
-            if viewModel.search.isLoadMoreEnabled {
-                errorBlock.isHidden = true
-                tableViewRecipeBottomspinner.color = UIColor.darkGray
-                tableViewRecipeBottomspinner.hidesWhenStopped = true
-                tableViewRecipe.tableFooterView = tableViewRecipeBottomspinner
-                tableViewRecipeBottomspinner.startAnimating()
-                viewModel.getRecipes(.loadMoreRecipes, searchFor: viewModel.search.text)
-            }
+        if tableViewRecipe.contentOffset.y >= (tableViewRecipe.contentSize.height - (tableViewRecipe.frame.size.height * 1.5))
+           && viewModel.search.isLoadingMoreEnabled
+           && viewModel.search.isLoadCompleted {
+            errorBlock.isHidden = true
+            tableViewRecipeBottomspinner.color = UIColor.darkGray
+            tableViewRecipeBottomspinner.hidesWhenStopped = true
+            tableViewRecipe.tableFooterView = tableViewRecipeBottomspinner
+            tableViewRecipeBottomspinner.startAnimating()
+            viewModel.getRecipes(.loadMoreRecipes, searchFor: viewModel.search.text)
         }
     }
     

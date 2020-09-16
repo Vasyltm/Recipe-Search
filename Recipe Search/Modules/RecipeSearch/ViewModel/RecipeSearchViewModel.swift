@@ -10,160 +10,164 @@ import Foundation
 
 
 
-final class RecipeSearchViewModel {
+final class RecipeSearchViewModel: URLSessionDataTask   {
+    
+    
+    var operation: BlockOperation?
+    
+    let queue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = 1
+        return queue
+    }()
     
     let dispatchGroup = DispatchGroup()
     var serverHandler = ServerHandler()
     var updateTableView: () -> () = {  }
-    
-    //MARK: add 1 property to share cell from to
-    var updateTableViewCellAmount: (Int) -> () = { _ in }
-    
-    
     var updateTableViewByIndex: (Int) -> () = { _ in  }
     var showError: ((Errors)->()) = {_ in }
     var recipe = [Recipe]()
-    var isErrorEnabled = true
     var search = SearchOption()
-    var isLoadingMoreEnabled: Bool {
-        self.search.numberOfRecipesTotal == self.search.maxRecipesForCall
-    }
-    
     
     func getRecipes(_ action: ChooseAction, searchFor: String = "", onPage: String = "1") {
         
-        if serverHandler.task?.state != nil && action == .getRecipeOnSearchButton {
-            serverHandler.task?.cancel()
+        guard self.isLoadEnabledWithOptions(action, searchText: searchFor) else {
+            self.search.numberOfRecipesFromLastCall = 0
+            self.search.isLoadCompleted = true
+            return
         }
-        self.search.taskId += 1
-        let imageQueue = DispatchQueue(label: "\(self.search.taskId)")
-        
-        guard isLoadEnabledWithOptions(action, text: searchFor) else { search.isLoadMoreEnabled = true; return }
         
         serverHandler.request(action, searchFor: search.text, onPage: String(search.page)) { [weak self] response in
             guard let self = self else { return }
             switch response {
                 case .failure(let error):
                     if !error.localizedDescription.contains("cancelled") {
-                        print(error.localizedDescription)
+                        //print(error.localizedDescription)
                         self.showError(.serverConectionError)
-                        self.search.isLoadMoreEnabled = true
                         self.recipe = []
                         self.updateTableView()
-                }
+                    }
+                    self.search.isLoadCompleted = true
                 
                 case .success(let data):
-                    if self.search.taskId == 254 { self.search.taskId = 1 }
-                    self.search.numberOfRecipesForCall = data["count"] as? Int ?? 0
-                    guard self.search.numberOfRecipesForCall > 0 else {
-                        self.updateTableView()
-                        self.recipe = []
-                        self.showError(.nothingFound)
-                        return
-                    }
-                    self.search.numberOfRecipesTotal = data["count"] as? Int ?? 0
-                    let recipeData = data["recipes"] as? [[String: Any]] ?? []
                     
+                    self.operation?.cancel()
+                    self.queue.cancelAllOperations()
+                    self.search.taskId += 1
+                    let imageQueue = DispatchQueue(label: "\(self.search.taskId)")
                     
-                    print("numberOfRecipesForCall \(self.search.numberOfRecipesForCall)")
-                    if  self.recipe.count < self.search.numberOfRecipesTotal {
-                        self.recipe = []  /// delete animated tableView cells
-                        print(">>>>>>>>\(self.search.numbersOfAnimatedCells)..\(self.search.numberOfRecipesForCall)")
-                        for _  in recipeData {
-                            let recipe = Recipe(id: "", image_url: "", source_url: "", title: "")
-                            self.recipe.append(recipe)
-                        }
-                        switch action {
-                            case .getRecipeOnSearchButton: self.updateTableViewCellAmount(self.search.numbersOfAnimatedCells)
-                            case .loadMoreRecipes: self.updateTableViewCellAmount(self.search.numberOfRecipesTotal)
-                            default: return
+                    let operation = BlockOperation {
+                        
+                        if self.search.taskId == Int8.max { self.search.taskId = 1 }
+                        self.search.numberOfRecipesForCall = data["count"] as? Int ?? 0
+                        
+                        guard self.search.numberOfRecipesForCall > 0  else {
+                            if action == .getRecipeOnSearchButton {
+                                self.recipe = []
+                                self.updateTableView()
+                                self.showError(.nothingFound)
+                            }
+                            return
                         }
                         
-                    }
-                    
-                    
-                    
-                    
-                    
-                    
-                    loop: for (index, value) in recipeData.enumerated(){
+                        guard searchFor.count >= 1 else {
+                            self.recipe = []
+                            self.updateTableView()
+                            return
+                        }
                         
-                        let id = value["recipe_id"] as? String ?? ""
-                        let imageStringURL = value["image_url"] as? String ?? ""
-                        let sourceURL = value["source_url"] as? String ?? ""
-                        let title = value["title"] as? String ?? ""
-                        var recipe = Recipe(id: id, image_url: imageStringURL, source_url: sourceURL, title: title)
+                        let recipeData = data["recipes"] as? [[String: Any]] ?? []
                         
-                        imageQueue.async(group: self.dispatchGroup) {
-                            
-                            guard String(self.search.taskId) == imageQueue.label, let imagrURL = URL(string: imageStringURL), self.recipe.indices.contains(index)  else { return }
-                            print(imageQueue.label)
-                            do {
-                                let data = try Data(contentsOf: imagrURL)
-                                if  recipe.image == nil {
-                                    recipe.image = data
-                                    if index <  self.recipe.count {
-                                        
-                                        print("number of recipes: \(self.recipe.count )  and index is \(index)")
-                                        self.recipe[index] = recipe
-                                        self.updateTableViewByIndex(index)
+                        if  self.search.numbersOfAnimatedCells < self.search.numberOfRecipesForCall || action == .loadMoreRecipes {
+                            switch action {
+                                case .getRecipeOnSearchButton:
+                                    self.recipe = []
+                                    self.updateRecipe(recipeData.count)
+                                    self.updateTableView()
+                                case .loadMoreRecipes:
+                                    self.updateRecipe(recipeData.count)
+                                    self.updateTableView()
+                                default: return
+                            }
+                        } else if self.search.numbersOfAnimatedCells > self.search.numberOfRecipesForCall && action == .getRecipeOnSearchButton {
+                            self.recipe = []
+                            self.updateRecipe(recipeData.count)
+                            self.updateTableView()
+                        }
+                        
+                        loop: for (index, value) in recipeData.enumerated(){
+                            imageQueue.async(group: self.dispatchGroup) {
+                                let id = value["recipe_id"] as? String ?? ""
+                                let imageStringURL = value["image_url"] as? String ?? ""
+                                let sourceURL = value["source_url"] as? String ?? ""
+                                let title = value["title"] as? String ?? ""
+      
+                                guard String(self.search.taskId) == imageQueue.label, let imagrURL = URL(string: imageStringURL), self.recipe.indices.contains(index)  else { return }
+                                var recipe = Recipe(id: id, image_url: imageStringURL, source_url: sourceURL, title: title)
+                                do {
+                                    let data = try Data(contentsOf: imagrURL)
+                                    if  recipe.image == nil {
+                                        recipe.image = data
+                                        if index <  self.recipe.count {
+                                            switch action {
+                                                case .getRecipeOnSearchButton:
+                                                    self.recipe[index] = recipe
+                                                    self.updateTableViewByIndex(index)
+                                                case .loadMoreRecipes:
+                                                    self.recipe[index + self.search.numberOfRecipesFromLastCall] = recipe
+                                                    self.updateTableViewByIndex(index  + self.search.numberOfRecipesFromLastCall)
+                                                default: return
+                                            }
+                                        }
                                     }
+                                } catch {
+                                    print("error loading image")
                                 }
-                            } catch {
-                                print("error loading image")
+                            }
+                        }
+                        
+                        self.dispatchGroup.notify(queue: .global()) {
+                            if String(self.search.taskId) == imageQueue.label {
+                                self.search.numberOfRecipesFromLastCall += self.search.numberOfRecipesForCall
+                                self.search.isLoadCompleted = true
                             }
                         }
                     }
-                    
-                    self.dispatchGroup.notify(queue: .global()) {
-                        if self.search.numberOfRecipesForCall < self.search.numbersOfAnimatedCells {
-                         //   if index == self.search.numberOfRecipes - 1 {
-                         //   self.recipe = []
-                                self.updateTableView()
-                          //  }
-                        }
-                        self.search.isLoadMoreEnabled = true
-                        //                        if self.recipe.count == 0  && self.isErrorEnabled {
-                        //                            self.showError(.nothingFound);
-                        //                            self.search.numbersOfCells = 0;
-                        //                            self.updateTableView();
-                        //                            self.isErrorEnabled = false
-                        //
-                        //                        }
-                        //                        if action == .getRecipeOnSearchButton || self.search.numberOfRecipes < self.search.numbersOfAnimatedCells {
-                        //                            self.search.isAnimatedCellsEnabled = false
-                        //                        }
-                        //
-                        //
-                        //                        self.isLoadEnabled = true
-                }
+                    self.operation = operation
+                    self.queue.addOperation(self.operation!)
             }
         }
     }
+
     
-    
-    private func isLoadEnabledWithOptions(_ action: ChooseAction, text: String) -> Bool {
-     
-        
+    private func isLoadEnabledWithOptions(_ action: ChooseAction, searchText: String) -> Bool {
         switch action {
             case  .getRecipeOnSearchButton:
-                self.recipe = []
-                search.text = text
-                search.page = 1
-                let recipes = Recipe(id: "", image_url: "", source_url: "", title: "loadView")
-                for _ in 0..<self.search.numbersOfAnimatedCells {
-                    recipe.append(recipes)
+                if serverHandler.task?.state != nil {
+                    serverHandler.task?.cancel()
                 }
+                self.recipe = []
+                self.search.numberOfRecipesFromLastCall = 0
+                search.text = searchText
+                search.page = 1
+                updateRecipe(search.numbersOfAnimatedCells)
                 updateTableView()
+                self.search.isLoadCompleted = false
                 return true
             case let action where action == .loadMoreRecipes && self.search.numberOfRecipesForCall == self.search.maxRecipesForCall:
                 search.page += 1
+                self.search.isLoadCompleted = false
                 return true
             default: return false
         }
-        
     }
     
     
+    private func updateRecipe(_ rangeEnd: Int) {
+        for _  in 0..<rangeEnd {
+            let recipe = Recipe(id: "", image_url: "", source_url: "", title: "loadView")
+            self.recipe.append(recipe)
+        }
+    }
     
 }

@@ -28,7 +28,7 @@
                     <constraints>
                         <constraint firstAttribute="height" constant="44" id="Lv9-LQ-6Px"/>
                     </constraints>
-                    <textInputTraits key="textInputTraits"/>
+                    <textInputTraits key="textInputTraits" returnKeyType="done"/>
                     <connections>
                         <outlet property="delegate" destination="-1" id="XCj-Ai-nSR"/>
                     </connections>
